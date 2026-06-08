@@ -540,6 +540,54 @@ particle.style.animationDuration=
 (Math.random()*10+5)+"s";
 document.body.appendChild(particle);
 }
+  const scriptURL =
+"https://script.google.com/macros/s/AKfycbz5yqaPJK5G_sBDZmqAkgSk9viF36X7sVBr92vh80aPPMBl-68S6o-V1DkQD4W5mhto0Q/exec";
+
+document
+.getElementById("rsvpForm")
+.addEventListener("submit", async function(e){
+
+e.preventDefault();
+
+// CEK SUDAH RSVP
+if(localStorage.getItem("rsvp_done")){
+alert("Anda sudah melakukan RSVP.");
+return;
+}
+
+const data = {
+nama:
+document.getElementById("nama").value,
+
+kehadiran:
+document.getElementById("kehadiran").value,
+
+ucapan:
+document.getElementById("ucapan").value
+};
+
+try{
+
+await fetch(scriptURL,{
+method:"POST",
+body:JSON.stringify(data)
+});
+
+localStorage.setItem("rsvp_done","true");
+
+document.getElementById("successMsg")
+.style.display="block";
+
+document.getElementById("rsvpForm")
+.reset();
+
+}catch(error){
+
+alert("Gagal mengirim RSVP");
+
+}
+
+});
 </script>
 
 </body>
