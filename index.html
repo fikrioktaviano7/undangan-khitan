@@ -492,105 +492,160 @@ berkenan hadir serta memberikan doa restu.
 </footer>
 
 <script>
-window.onload=function(){
-setTimeout(()=>{
-document.getElementById('loader').style.opacity='0';
-setTimeout(()=>{
-document.getElementById('loader').style.display='none';
-},1000)
-},2000)
+// ==========================
+// LOADER
+// ==========================
+window.onload = function () {
+    setTimeout(() => {
+        document.getElementById('loader').style.opacity = '0';
+
+        setTimeout(() => {
+            document.getElementById('loader').style.display = 'none';
+        }, 1000);
+
+    }, 2000);
+};
+
+// ==========================
+// OPEN INVITATION
+// ==========================
+function openInvitation() {
+    document.getElementById("opening").style.display = "none";
+
+    const music =
+        document.getElementById("music");
+
+    music.play().catch(err => {
+        console.log("Autoplay diblok browser");
+    });
 }
 
-function openInvitation(){
-document.getElementById("opening").style.display="none";
-document.getElementById("music").play();
-}
-
+// ==========================
+// COUNTDOWN
+// ==========================
 const targetDate =
 new Date("June 28, 2026 09:00:00").getTime();
 
-setInterval(()=>{
+setInterval(() => {
 
-const now=new Date().getTime();
-const distance=targetDate-now;
+    const now =
+    new Date().getTime();
 
-document.getElementById("days").innerHTML=
-Math.floor(distance/(1000*60*60*24));
+    const distance =
+    targetDate - now;
 
-document.getElementById("hours").innerHTML=
-Math.floor((distance%(1000*60*60*24))
-/(1000*60*60));
+    document.getElementById("days").innerHTML =
+        Math.floor(distance / (1000 * 60 * 60 * 24));
 
-document.getElementById("minutes").innerHTML=
-Math.floor((distance%(1000*60*60))
-/(1000*60));
+    document.getElementById("hours").innerHTML =
+        Math.floor(
+            (distance % (1000 * 60 * 60 * 24))
+            / (1000 * 60 * 60)
+        );
 
-document.getElementById("seconds").innerHTML=
-Math.floor((distance%(1000*60))
-/1000);
+    document.getElementById("minutes").innerHTML =
+        Math.floor(
+            (distance % (1000 * 60 * 60))
+            / (1000 * 60)
+        );
 
-},1000);
+    document.getElementById("seconds").innerHTML =
+        Math.floor(
+            (distance % (1000 * 60))
+            / 1000
+        );
 
+}, 1000);
+
+// ==========================
 // PARTICLES
-for(let i=0;i<50;i++){
-let particle=document.createElement("div");
-particle.className="particle";
-particle.style.left=Math.random()*100+"%";
-particle.style.animationDuration=
-(Math.random()*10+5)+"s";
-document.body.appendChild(particle);
+// ==========================
+for (let i = 0; i < 50; i++) {
+
+    let particle =
+    document.createElement("div");
+
+    particle.className = "particle";
+
+    particle.style.left =
+        Math.random() * 100 + "%";
+
+    particle.style.animationDuration =
+        (Math.random() * 10 + 5) + "s";
+
+    document.body.appendChild(particle);
 }
-  const scriptURL =
+
+// ==========================
+// RSVP GOOGLE SHEET
+// ==========================
+const scriptURL =
 "https://script.google.com/macros/s/AKfycbz5yqaPJK5G_sBDZmqAkgSk9viF36X7sVBr92vh80aPPMBl-68S6o-V1DkQD4W5mhto0Q/exec";
 
 document
 .getElementById("rsvpForm")
-.addEventListener("submit", async function(e){
+.addEventListener(
+"submit",
+async function (e) {
 
-e.preventDefault();
+    e.preventDefault();
 
-// CEK SUDAH RSVP
-if(localStorage.getItem("rsvp_done")){
-alert("Anda sudah melakukan RSVP.");
-return;
-}
+    // Cek sudah RSVP
+    if (
+        localStorage.getItem("rsvp_done")
+    ) {
+        alert(
+            "Anda sudah melakukan RSVP."
+        );
+        return;
+    }
 
-const data = {
-nama:
-document.getElementById("nama").value,
+    const data = {
+        nama:
+            document.getElementById("nama").value,
 
-kehadiran:
-document.getElementById("kehadiran").value,
+        kehadiran:
+            document.getElementById("kehadiran").value,
 
-ucapan:
-document.getElementById("ucapan").value
-};
+        ucapan:
+            document.getElementById("ucapan").value
+    };
 
-try {
+    try {
 
-await fetch(scriptURL,{
-method:"POST",
-mode:"no-cors",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify(data)
+        await fetch(scriptURL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: {
+                "Content-Type":
+                "application/json"
+            },
+            body:
+            JSON.stringify(data)
+        });
+
+        localStorage.setItem(
+            "rsvp_done",
+            "true"
+        );
+
+        document.getElementById(
+            "successMsg"
+        ).style.display = "block";
+
+        document.getElementById(
+            "rsvpForm"
+        ).reset();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Gagal mengirim RSVP"
+        );
+    }
 });
-
-localStorage.setItem("rsvp_done","true");
-
-document.getElementById("successMsg")
-.style.display="block";
-
-document.getElementById("rsvpForm")
-.reset();
-
-}catch(error){
-
-console.error(error);
-alert("Gagal mengirim RSVP");
-
-}
 </script>
 
 </body>
