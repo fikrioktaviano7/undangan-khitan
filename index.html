@@ -493,130 +493,53 @@ berkenan hadir serta memberikan doa restu.
 
 <script>
 // ==========================
-// LOADER
-// ==========================
-window.onload = function () {
-    setTimeout(() => {
-        document.getElementById('loader').style.opacity = '0';
-
-        setTimeout(() => {
-            document.getElementById('loader').style.display = 'none';
-        }, 1000);
-
-    }, 2000);
-};
-
-// ==========================
-// OPEN INVITATION
-// ==========================
-function openInvitation() {
-    document.getElementById("opening").style.display = "none";
-
-    const music =
-        document.getElementById("music");
-
-    music.play().catch(err => {
-        console.log("Autoplay diblok browser");
-    });
-}
-
-// ==========================
-// COUNTDOWN
-// ==========================
-const targetDate =
-new Date("June 28, 2026 09:00:00").getTime();
-
-setInterval(() => {
-
-    const now =
-    new Date().getTime();
-
-    const distance =
-    targetDate - now;
-
-    document.getElementById("days").innerHTML =
-        Math.floor(distance / (1000 * 60 * 60 * 24));
-
-    document.getElementById("hours").innerHTML =
-        Math.floor(
-            (distance % (1000 * 60 * 60 * 24))
-            / (1000 * 60 * 60)
-        );
-
-    document.getElementById("minutes").innerHTML =
-        Math.floor(
-            (distance % (1000 * 60 * 60))
-            / (1000 * 60)
-        );
-
-    document.getElementById("seconds").innerHTML =
-        Math.floor(
-            (distance % (1000 * 60))
-            / 1000
-        );
-
-}, 1000);
-
-// ==========================
-// PARTICLES
-// ==========================
-for (let i = 0; i < 50; i++) {
-
-    let particle =
-    document.createElement("div");
-
-    particle.className = "particle";
-
-    particle.style.left =
-        Math.random() * 100 + "%";
-
-    particle.style.animationDuration =
-        (Math.random() * 10 + 5) + "s";
-
-    document.body.appendChild(particle);
-}
-
-// ==========================
 // RSVP GOOGLE SHEET
 // ==========================
 const scriptURL =
 "https://script.google.com/macros/s/AKfycbziJUhx8GHJQH1xwGy7SYcHrxaeVVBIUw5cWQ4wcQF6LIkWvD1XnWuBdtm2JEoqRYQ/exec";
 
-document
-.getElementById("rsvpForm")
-.addEventListener(
+const form =
+document.getElementById("rsvpForm");
+
+const successMsg =
+document.getElementById("successMsg");
+
+form.addEventListener(
 "submit",
-async function (e) {
+async function(e){
 
     e.preventDefault();
 
-    // Cek sudah RSVP
-    if (
-        localStorage.getItem("rsvp_done")
-    ) {
-        alert(
-            "Anda sudah melakukan RSVP."
-        );
+    // Cegah submit 2x
+    if(localStorage.getItem("rsvp_done")){
+        alert("Anda sudah melakukan RSVP.");
         return;
     }
 
+    const submitBtn =
+    form.querySelector("button");
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML =
+    "⏳ Mengirim...";
+
     const data = {
         nama:
-            document.getElementById("nama").value,
+        document.getElementById("nama").value,
 
         kehadiran:
-            document.getElementById("kehadiran").value,
+        document.getElementById("kehadiran").value,
 
         ucapan:
-            document.getElementById("ucapan").value
+        document.getElementById("ucapan").value
     };
 
-    try {
+    try{
 
-        await fetch(scriptURL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: {
+        const response =
+        await fetch(scriptURL,{
+            method:"POST",
+            headers:{
                 "Content-Type":
                 "application/json"
             },
@@ -624,26 +547,43 @@ async function (e) {
             JSON.stringify(data)
         });
 
-        localStorage.setItem(
-            "rsvp_done",
-            "true"
-        );
+        if(response.ok){
 
-        document.getElementById(
-            "successMsg"
-        ).style.display = "block";
+            localStorage.setItem(
+                "rsvp_done",
+                "true"
+            );
 
-        document.getElementById(
-            "rsvpForm"
-        ).reset();
+            successMsg.style.display =
+            "block";
 
-    } catch (error) {
+            successMsg.innerHTML =
+            "✅ RSVP berhasil dikirim";
+
+            form.reset();
+
+        } else {
+
+            throw new Error(
+                "Server error"
+            );
+        }
+
+    } catch(error){
 
         console.error(error);
 
         alert(
-            "Gagal mengirim RSVP"
+        "Gagal mengirim RSVP. Coba cek Apps Script / deployment."
         );
+
+    } finally {
+
+        submitBtn.disabled =
+        false;
+
+        submitBtn.innerHTML =
+        "📨 Kirim RSVP";
     }
 });
 </script>
