@@ -566,10 +566,14 @@ ucapan:
 document.getElementById("ucapan").value
 };
 
-try{
+try {
 
 await fetch(scriptURL,{
 method:"POST",
+mode:"no-cors",
+headers:{
+"Content-Type":"application/json"
+},
 body:JSON.stringify(data)
 });
 
@@ -583,11 +587,10 @@ document.getElementById("rsvpForm")
 
 }catch(error){
 
+console.error(error);
 alert("Gagal mengirim RSVP");
 
 }
-
-});
 </script>
 
 </body>
